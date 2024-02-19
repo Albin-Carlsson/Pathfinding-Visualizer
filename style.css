@@ -1,0 +1,27 @@
+/* Colors */
+.monoRed {
+    color: #F22786;
+}
+.monoBlue {
+    color: #A885F2;
+}
+.monoDark {
+    color: #39382E;
+}
+.monoGreen {
+    color: #A3D930;
+}
+.monoBackground {
+    background-color: #403E34;
+}
+
+#main {
+    background-size: 100%;
+    background-color: #403E34;
+    color: #ddd;
+    /*display: block;*/
+}
+
+.full.height {
+    min-height: 100vh;
+}
