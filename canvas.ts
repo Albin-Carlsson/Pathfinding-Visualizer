@@ -196,19 +196,16 @@ function toggleFill(canvas: HTMLCanvasElement, row: number, col: number, nOfSqua
 
     if (isFilled) {
         // Clear the square if it's already filled with the target color
-    // Clear the square if it's already filled with the target color
-    ctx.fillStyle = "white";
-    ctx.fillRect(x, y, gridSize, gridSize);
-    // Redraw the square border if necessary
-    ctx.strokeStyle = "black";
-    ctx.strokeRect(x, y, gridSize, gridSize);
-    const gridNode = col+20*row;
-    if(type === "wall") {
-        addNode(grid, gridNode+1, rows, cols);
-        console.log("node added");
-
-    }
- 
+        ctx.fillStyle = "white";
+        ctx.fillRect(x, y, gridSize, gridSize);
+        // Redraw the square border if necessary
+        ctx.strokeStyle = "black";
+        ctx.strokeRect(x, y, gridSize, gridSize);
+        const gridNode = col+20*row;
+        if(type === "wall") {
+            addNode(grid, gridNode+1, rows, cols);
+            console.log("node added");
+        }
     } else {
         // Fill the square with the specified color if it's not filled
         const gridNode = col+20*row;
@@ -262,13 +259,27 @@ document.getElementById('startButton')?.addEventListener('click', () => {
 document.getElementById('goalButton')?.addEventListener('click', () => {
     currentMode = 'goal';
     console.log("goal");
-
 });
 
 document.getElementById('wallButton')?.addEventListener('click', () => {
     currentMode = 'wall';
     console.log("wall");
+});
 
+document.getElementById('resetButton')?.addEventListener('click', () => {
+    //currentMode = 'wall';
+    //console.log("reset");
+});
+
+document.getElementById('runButton')?.addEventListener('click', () => {
+    let [fastestPath, visited] = bfs(startGridNode, goalGridNode, grid);
+
+    if (fastestPath && fastestPath.length > 0) {
+        fillPath(canvas, visited, 20, 20, "gray");
+        fillPath(canvas, fastestPath, 20, 20, "blue");
+    } else {
+        console.error("No valid path found.");
+    }
 });
 
 
@@ -278,13 +289,6 @@ document.addEventListener('keydown', (event: KeyboardEvent) => {
     console.log(goalGridNode);
     console.log(startGridNode);
     if (event.key === 'e' && startGridNode !== -1 && goalGridNode !== -1) {
-        let visited = bfs(startGridNode, goalGridNode, grid)[1];
-        let fastestPath = bfs(startGridNode, goalGridNode, grid)[0];
-        if (fastestPath && fastestPath.length > 0) {
-            fillPath(canvas, visited, 20, 20, "gray");
-            fillPath(canvas, fastestPath, 20, 20, "blue");
-        } else {
-            console.error("No valid path found.");
-        }
+        
     }
 });
