@@ -32,7 +32,6 @@ let goal = {
 let goalGridNode: number = 203;
 
 
-// Function to draw a rectangular grid of squares on a canvas
 /**
  * Draws a rectangular grid of squares on a canvas.
  * @param {number} nOfSquares - The number of squares in each row/column of the grid.
@@ -47,22 +46,38 @@ function drawGrid(nOfSquares: number, gridColor: string) {
         return;
     }
   
-    // Set the color for the grid lines
-    ctx.strokeStyle = gridColor;
-  
   
     // Draw grid lines
-    for (let gridX = 0; gridX <= nOfSquares; gridX++) {
-        for (let gridY = 0; gridY <= nOfSquares; gridY++) {
+    console.log("run");
+    for (let gridX = 0; gridX < nOfSquares; gridX++) {
+        for (let gridY = 0; gridY < nOfSquares; gridY++) {
             const x = gridX * gridSize + gridOrigin;
             const y = gridY * gridSize + gridOrigin;
-            ctx.strokeStyle = "black";
-            ctx.strokeRect(x, y, gridSize, gridSize);
-            ctx.fillStyle = "white";
-            ctx.fillRect(x,y, gridSize, gridSize);
+            fillSquare(x, y, gridSize, "white");
         }
     }
 }
+
+
+/**
+ * Draws a canvas square on specified place on canvas with black border.
+ * @param {number} x - x-coordinate for top right corner of rectangle including border
+ * @param {number} y - y-coord
+ * @param {number} gridSize -  size of rectangle in pixels
+ * @param {string} color - inside color
+ */
+function fillSquare(x: number, y: number, gridSize: number, color: string): void {
+    if(ctx) {
+        const borderWidth = 2;
+        ctx.clearRect(x, y, gridSize, gridSize);
+        ctx.fillStyle = "black";
+        ctx.fillRect(x, y, gridSize, gridSize);
+        ctx.fillStyle = color;
+        ctx.fillRect(x, y, gridSize-borderWidth, gridSize-borderWidth);
+
+    }
+}
+
 
 /**
  * Toggles the fill state of a square in a grid on the canvas.
@@ -71,7 +86,7 @@ function drawGrid(nOfSquares: number, gridColor: string) {
  * @param {number} col - The column index of the square to toggle.
  * @param {number} nOfSquares - The number of squares in each row/column of the grid.
  * @param {string} fillColor - The color to fill the square with.
- * @param {boolean} isFilled - Whether the square is already filled with the target color.
+ * @param {boolean} isFilled - Whether the square is already filled a color.
  */
 canvas.addEventListener('mousedown', (event: MouseEvent) => {
     function isFilled(): boolean {
@@ -108,25 +123,35 @@ canvas.addEventListener('mousedown', (event: MouseEvent) => {
          // Calculate the row and column in the grid based on the mouse position
          const row = Math.floor((mouseY - gridOrigin) / gridSize);
          const col = Math.floor((mouseX - gridOrigin) / gridSize);
+         console.log(row * 20 + col, "node");
+         console.log(col, "col");
+         console.log(row, "row");
          if(mouseX > gridOrigin && mouseX < gridEnd + gridSize && mouseY > gridOrigin && mouseY < gridEnd + gridSize) {
 
          switch (currentMode) {
             case 'start':
+                // if block is already placed at cursor, remove block
                 if (isFilled) {
                     toggleFill(canvas, row, col, nOfSquares, "yellow", true, "start");
+                    // if block at cursor was the start block, mark it as removed
                     if(row === start.row && col === start.col) {
                         start.placed = false;
                         startGridNode = -1;
 
                     } else {
+                        // if it was another block, place a start block there instead
                         toggleFill(canvas, start.row, start.col, nOfSquares, "yellow", true, "start");
                         startGridNode = col+20*row;
 
                     }
+                    // else if there is no block at cursor
                 } else {
+                    // remove old start block and place new start block on new place
                     if (start.placed === true) {
                         toggleFill(canvas, start.row, start.col, nOfSquares, "yellow", true, "start");
                         toggleFill(canvas, row, col, nOfSquares, "yellow", false, "start");
+                        startGridNode = col+20*row;
+                        // if no start block is placed anywhere and cursor on blank space place start.
                     } else {
                         toggleFill(canvas, row, col, nOfSquares, "yellow", false, "start");
                         start.placed = true;
@@ -192,15 +217,10 @@ function toggleFill(canvas: HTMLCanvasElement, row: number, col: number, nOfSqua
     const y = row * gridSize + gridOrigin;
 
     // Get the color data of the clicked square
-    // Get the color data of the clicked square
 
     if (isFilled) {
         // Clear the square if it's already filled with the target color
-        ctx.fillStyle = "white";
-        ctx.fillRect(x, y, gridSize, gridSize);
-        // Redraw the square border if necessary
-        ctx.strokeStyle = "black";
-        ctx.strokeRect(x, y, gridSize, gridSize);
+        fillSquare(x, y, gridSize, "white");
         const gridNode = col+20*row;
         if(type === "wall") {
             addNode(grid, gridNode+1, rows, cols);
@@ -213,9 +233,7 @@ function toggleFill(canvas: HTMLCanvasElement, row: number, col: number, nOfSqua
             removeNode(grid, gridNode, rows, cols)
             console.log("node removed");
         }
-        ctx.fillStyle = fillColor;
-        ctx.fillRect(x, y, gridSize, gridSize);
-
+        fillSquare(x, y, gridSize, fillColor);
     }
 }
 
@@ -244,8 +262,7 @@ function fillPath(canvas: HTMLCanvasElement, path: number[], rows: number, cols:
         const yPos = Math.floor(path[i] / rows) * gridSize + gridOrigin;
         
         // Fill the cell with the specified color
-        ctx.fillStyle = fillColor;
-        ctx.fillRect(xPos, yPos, gridSize, gridSize);
+        fillSquare(xPos, yPos, gridSize, fillColor);
     }
 }
 
@@ -277,6 +294,8 @@ document.getElementById('runButton')?.addEventListener('click', () => {
     if (fastestPath && fastestPath.length > 0) {
         fillPath(canvas, visited, 20, 20, "gray");
         fillPath(canvas, fastestPath, 20, 20, "blue");
+        console.log(fastestPath);
+        console.log(startGridNode);
     } else {
         console.error("No valid path found.");
     }
@@ -285,10 +304,6 @@ document.getElementById('runButton')?.addEventListener('click', () => {
 
 
 drawGrid(20, "black");
-document.addEventListener('keydown', (event: KeyboardEvent) => {
-    console.log(goalGridNode);
-    console.log(startGridNode);
-    if (event.key === 'e' && startGridNode !== -1 && goalGridNode !== -1) {
-        
-    }
-});
+
+
+console.log(grid);
