@@ -16,7 +16,7 @@ const gridSize = (gridEnd - gridOrigin) / nOfSquares;
 const rows = 20;
 const cols = 20;
 let grid = generate2DGridAdjacencyList(20, 20);
-console.log(grid);
+
 
 let start = {
     placed: false,
@@ -170,6 +170,7 @@ canvas.addEventListener('mousedown', (event: MouseEvent) => {
                         goalGridNode = -1;
                     } else {
                         toggleFill(canvas, goal.row, goal.col, nOfSquares, "green", true, "goal");
+                        goalGridNode = col+20*row;
                     }
                 } else {
                     if (goal.placed === true) {
@@ -284,8 +285,7 @@ document.getElementById('wallButton')?.addEventListener('click', () => {
 });
 
 document.getElementById('resetButton')?.addEventListener('click', () => {
-    //currentMode = 'wall';
-    //console.log("reset");
+    resetSim();
 });
 
 document.getElementById('runButton')?.addEventListener('click', () => {
@@ -303,7 +303,21 @@ document.getElementById('runButton')?.addEventListener('click', () => {
 
 
 
-drawGrid(20, "black");
+//drawGrid(20, "black");
 
 
-console.log(grid);
+
+
+function startSim() {
+    drawGrid(20, "black");
+}
+
+function resetSim() {
+    // reset nodes
+    grid = generate2DGridAdjacencyList(20, 20);
+
+    // reset grid graphics
+    drawGrid(20, "black");
+}
+
+startSim();
