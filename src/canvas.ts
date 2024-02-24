@@ -234,7 +234,7 @@ function toggleFill(canvas: HTMLCanvasElement, row: number, col: number, nOfSqua
         fillSquare(x, y, gridSize, "white");
         const gridNode = col+20*row;
         if(type === "wall") {
-            addNode(grid, gridNode+1, rows, cols);
+            addNode(grid, gridNode, rows, cols);
             console.log("node added");
         }
     } else {
@@ -314,6 +314,7 @@ document.getElementById('resetButton')?.addEventListener('click', () => {
 document.getElementById('runButton')?.addEventListener('click', () => {
     let [fastestPath, visited] = bfs(startGridNode, goalGridNode, grid);
     console.log(visited);
+    console.log(grid);
     if (fastestPath && fastestPath.length > 0) {
         fillPath(canvas, visited, fastestPath, 20, 20, "gray", "blue", 50);
     } else {
