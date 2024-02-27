@@ -1,6 +1,6 @@
 import {generate2DGridAdjacencyList, addNode, removeNode } from "./grid";
 import {bfs} from "./bfs";
-import { fill } from "lodash";
+import {dfs} from "./dfs";
 // Get the canvas element by its ID
 export const canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
 canvas.width = window.innerWidth;
@@ -291,6 +291,7 @@ export function fillPath(canvas: HTMLCanvasElement, path: number[], fastestPath:
 
 
 let currentMode: 'start' | 'goal' | 'wall' | null = null;
+let currentAlgorithm: "bfs" | "dfs" | null = null;
 
 document.getElementById('startButton')?.addEventListener('click', () => {
     currentMode = 'start';
@@ -312,18 +313,31 @@ document.getElementById('resetButton')?.addEventListener('click', () => {
 });
 
 document.getElementById('runButton')?.addEventListener('click', () => {
-    let [fastestPath, visited] = bfs(startGridNode, goalGridNode, grid);
-    console.log(visited);
-    console.log(grid);
+    if (currentAlgorithm === "bfs") {
+        let [fastestPath, visited] = bfs(startGridNode, goalGridNode, grid);
+        runSim(fastestPath, visited);
+    } else if (currentAlgorithm === "dfs") {
+        let [fastestPath, visited] = dfs(startGridNode, goalGridNode, grid);
+        runSim(fastestPath, visited);
+    } else {
+        return null;
+    }
+});
+
+document.getElementById("dfsButton")?.addEventListener("click", () => {
+    currentAlgorithm = "dfs";
+})
+document.getElementById("bfsButton")?.addEventListener("click", () => {
+    currentAlgorithm = "bfs";
+})
+
+function runSim(fastestPath: number[], visited: number[]) {
     if (fastestPath && fastestPath.length > 0) {
         fillPath(canvas, visited, fastestPath, 20, 20, "gray", "blue", 50);
     } else {
         console.error("No valid path found.");
     }
-});
-
-
-
+}
 
 function startSim() {
     drawGrid(20, "black");
