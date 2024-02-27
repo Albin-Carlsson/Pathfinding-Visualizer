@@ -1,6 +1,8 @@
 import {generate2DGridAdjacencyList, addNode, removeNode } from "./grid";
 import {bfs} from "./bfs";
 import {dfs} from "./dfs";
+import {aStar} from "./a-star";
+
 // Get the canvas element by its ID
 export const canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
 canvas.width = window.innerWidth;
@@ -10,11 +12,11 @@ const ctx = canvas.getContext('2d');
 
 // grid definitions
 const fillColor = '#FF0000'; // Fill color for the squares
-const gridOrigin = canvas.height * 0.2;
+export const gridOrigin = canvas.height * 0.2;
 const gridEnd = canvas.height * 0.8;
 const nOfSquares = 20;
-const gridSize = (gridEnd - gridOrigin) / nOfSquares;
-const rows = 20;
+export const gridSize = (gridEnd - gridOrigin) / nOfSquares;
+export const rows = 20;
 const cols = 20;
 let grid = generate2DGridAdjacencyList(20, 20);
 
@@ -291,7 +293,7 @@ export function fillPath(canvas: HTMLCanvasElement, path: number[], fastestPath:
 
 
 let currentMode: 'start' | 'goal' | 'wall' | null = null;
-let currentAlgorithm: "bfs" | "dfs" | null = null;
+let currentAlgorithm: "bfs" | "dfs" | "aStar" | null = null;
 
 document.getElementById('startButton')?.addEventListener('click', () => {
     currentMode = 'start';
@@ -319,6 +321,9 @@ document.getElementById('runButton')?.addEventListener('click', () => {
     } else if (currentAlgorithm === "dfs") {
         let [fastestPath, visited] = dfs(startGridNode, goalGridNode, grid);
         runSim(fastestPath, visited);
+    } else if (currentAlgorithm === "aStar") {
+        let [fastestPath, visited] = aStar(startGridNode, goalGridNode, grid);
+        runSim(fastestPath, visited);
     } else {
         return null;
     }
@@ -330,6 +335,9 @@ document.getElementById("dfsButton")?.addEventListener("click", () => {
 document.getElementById("bfsButton")?.addEventListener("click", () => {
     currentAlgorithm = "bfs";
 })
+document.getElementById("aStarButton")?.addEventListener("click", () => {
+    currentAlgorithm = "aStar";
+})
 
 function runSim(fastestPath: number[], visited: number[]) {
     if (fastestPath && fastestPath.length > 0) {
@@ -337,6 +345,7 @@ function runSim(fastestPath: number[], visited: number[]) {
     } else {
         console.error("No valid path found.");
     }
+    console.log(currentAlgorithm);
 }
 
 function startSim() {
