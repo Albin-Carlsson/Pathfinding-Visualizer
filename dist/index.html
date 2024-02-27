@@ -25,47 +25,49 @@
 				test
 			</canvas>
 		</div>
-		<div class="column center aligned middle aligned">
-			<div class="ui grid">
-				<div class="row">
-					<div class="column">
-						<p class="ui inverted header">Color in nodes</p>
-						<div class="ui buttons">
-							<div class="ui large monoBlue button" id="startButton">Start</div>
-							<div class="ui large monoGreen button" id="goalButton">Goal</div>
-							<div class="ui large monoDark button" id="wallButton">Wall</div>
+		<div class="ui two column grid centered middle aligned">
+			<div class="column center aligned middle aligned">
+				<div class="ui grid">
+					<div class="row">
+						<div class="twelve wide column">
+
+							<!-- CHOOSE BLOCK PLACEMENT -->
+							<p class="ui inverted header">Color in nodes</p>
+							<div class="ui fluid buttons">
+								<div class="ui large monoBlue button" id="startButton">Start</div>
+								<div class="ui large monoGreen button" id="goalButton">Goal</div>
+								<div class="ui large monoDark button" id="wallButton">Wall</div>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div class="row">
-					<div class="column">
-						
-						<p class="ui inverted header">Searching algorithm</p>
-						<div class="ui buttons">
-							<div class="ui large monoBlue button" id="bfsButton">BFS</div>
-							<div class="ui large monoGreen button" id="a-starButton">A*</div>
-							<div class="ui large monoDark button" id="dfsButton">DFS</div>
+					<div class="row">
+						<div class="twelve wide column">
+
+							<!-- CHOOSE ALGORITHM -->
+							<p class="ui inverted header">Searching algorithm</p>
+							<div class="ui fluid buttons">
+								<div class="ui large monoBlue button" id="bfsButton">BFS</div>
+								<div class="ui large monoGreen button" id="a-starButton">A*</div>
+								<div class="ui large monoDark button" id="dfsButton">DFS</div>
+							</div>
+							
 						</div>
-						
 					</div>
-				</div>
-				<div class="row">
-					<div class="column"> 
-						<div class="ui large blue button" id="resetButton">Reset</div>
-						<div class="ui large blue button" id="runButton">Run</div>
+					<div class="row">
+						<div class="twelve wide column"> 
+							<div class="ui large blue button" id="resetButton">Reset</div>
+							<div class="ui large blue button" id="runButton">Run</div>
+						</div>
 					</div>
 				</div>
 			</div>
+			<div class="column center aligned middle aligned">
+				<p>
+
+				</p>
+			</div>
 		</div>
 	</div>
-	
-	<script>
-		$('.ui.selection.dropdown')
-			.dropdown({
-				clearable: true,
-			})
-		;
-	</script>
 	<script src="bundle.js"></script>
 </body>
 
