@@ -40,15 +40,11 @@
 				<div class="row">
 					<div class="column">
 						
-						<div class="ui search selection dropdown">
-							<input type="hidden" name="country">
-							<div class="default text">Search algorithm</div>
-							<i class="dropdown icon"></i>
-							<div class="menu">
-								<div class="item" data-value="BFS">Breadth first search</div>
-								<div class="item" data-value="">TBA</div>
-								<div class="item" data-value="">TBA</div>
-							</div>
+						<p class="ui inverted header">Searching algorithm</p>
+						<div class="ui buttons">
+							<div class="ui large monoBlue button" id="bfsButton">BFS</div>
+							<div class="ui large monoGreen button" id="a-starButton">A*</div>
+							<div class="ui large monoDark button" id="dfsButton">DFS</div>
 						</div>
 						
 					</div>
@@ -56,7 +52,7 @@
 				<div class="row">
 					<div class="column"> 
 						<div class="ui large blue button" id="resetButton">Reset</div>
-						<div class="ui large blue button" id="runButton">Start</div>
+						<div class="ui large blue button" id="runButton">Run</div>
 					</div>
 				</div>
 			</div>
@@ -66,7 +62,7 @@
 	<script>
 		$('.ui.selection.dropdown')
 			.dropdown({
-				clearable: true
+				clearable: true,
 			})
 		;
 	</script>
