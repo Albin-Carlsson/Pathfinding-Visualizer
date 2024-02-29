@@ -5,7 +5,7 @@ type nodeInfo = {f: number, g: number, h: number}; // distances. g = to goal, h 
 
 
 /**
- * Calculates distance between two nodes using pythagoras using 
+ * Calculates distance between two nodes with manhattan distance, using
  * the global variables of the grid size
  * @param n1 current node
  * @param n2 goal node
@@ -26,7 +26,21 @@ function distToNode(n1: number , n2: number): number {
     return distance;
 }
 
-
+/**
+ * Calculates the shortest path according to the a* algorithm
+ * @param {number} start start node
+ * @param {number} goal  goal node
+ * @param {AdjacencyList} grid  The grid as an adjacencyList
+ * 
+ * @returns {Array<number[]>} an array of two values. First the shortest path. 
+ * Second, all the visited nodes. If no path is found the function returns an empty array
+ * 
+ * @example
+ * // Assuming a predefined AdjacencyList for a 3x3 grid
+ * const result = aStar(0, 8, grid); // Find path from top-left to bottom-right
+ * console.log(result[0]); // Logs the path from start to goal
+ * console.log(result[1]); // Logs the visited nodes
+ */
 export function aStar(start: number, goal: number, grid: AdjacencyList): Array<number[]> {
     let next = new Set<number>(); // Nodes to be evaluated
     next.add(start);
@@ -60,11 +74,11 @@ export function aStar(start: number, goal: number, grid: AdjacencyList): Array<n
         // Look at all neighbors of the current node
         let neighbors = grid.get(current) || [];
         neighbors.forEach(neighbor => {
-            // Skip if neighbor is in the closed list, but allow reconsideration if a shorter path is found
-            if (visited.has(neighbor) && (distance.get(neighbor)?.g ?? Infinity) <= distance.get(current)!.g + 1) return;
-
             // G value for neighbor
             let newG = distance.get(current)!.g + 1; 
+
+            // Skip if neighbor is in the closed list, but allow reconsideration if a shorter path is found
+            if (visited.has(neighbor) && (distance.get(neighbor)?.g ?? Infinity) <= newG) return;
 
             if (!next.has(neighbor) || newG < (distance.get(neighbor)?.g ?? Infinity)) {
                 // If an equal or better path is found, replace it

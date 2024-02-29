@@ -1,16 +1,16 @@
 import { AdjacencyList } from "./grid";
+
 /**
- * Performs a Depth-First Search (DFS) on a grid represented as an adjacency list, to find a path from a start node to a goal node.
- * This function uses a stack to manage the nodes to be visited, marking each visited node to avoid revisiting them. If the goal node
- * is reached, the function reconstructs and returns the path from the start node to the goal node, along with the list of visited nodes.
- * If the goal is not reachable from the start, the function returns an empty array.
+ * Performs a Depth-First Search (DFS) on a grid represented as an adjacency list, 
+ * to find a path from a start node to a goal node.
  * 
  * @param {number} start - The identifier of the start node in the grid.
  * @param {number} goal - The identifier of the goal node in the grid.
- * @param {AdjacencyList} grid - The adjacency list representing the grid, where each key is a node identifier, and the value is an array
- * of identifiers for adjacent nodes.
- * @returns {Array<number[]>} - A 2-element array where the first element is an array representing the path from the start node to the goal
- * node (inclusive), and the second element is an array of all visited nodes' identifiers. Returns an empty array if the goal is not reachable.
+ * @param {AdjacencyList} grid - The adjacency list representing the grid, where each key is a node identifier, 
+ * and the value is an array of identifiers for adjacent nodes.
+ * @returns {Array<number[]>} - A 2-element array where the first element is an array representing the path from 
+ * the start node to the goal node, and the second element is an array of all visited nodes. Returns an empty array 
+ * if the goal is not reachable.
  *
  * @example
  * // Assuming a predefined AdjacencyList for a 3x3 grid
