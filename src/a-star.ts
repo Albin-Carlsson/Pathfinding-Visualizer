@@ -1,17 +1,17 @@
-
 import { AdjacencyList, generate2DGridAdjacencyList } from "./grid";
-import {  empty, is_empty, head, dequeue, enqueue} from '../lib/queue_array';
 import { gridOrigin, gridSize, rows } from './canvas';
-import { curry } from "lodash";
+import { includes } from "lodash";
+type nodeInfo = {f: number, g: number, h: number}; // distances. g = to goal, h = from start, f = sum of g and h
+
 
 /**
- * Calculates distance between two nodes using pythagoras assuming 
- * the size of the grid to be 20x20
+ * Calculates distance between two nodes using pythagoras using 
+ * the global variables of the grid size
  * @param n1 current node
  * @param n2 goal node
  * @returns distance between "n1" and "n2"
  */
-function distance(n1: number , n2: number): number {
+function distToNode(n1: number , n2: number): number {
     let distance: number;
     let CurrentXPos = (n1 % rows) * gridSize + gridOrigin;
     let CurrentYPos = Math.floor(n1 / rows) * gridSize + gridOrigin;
@@ -19,100 +19,74 @@ function distance(n1: number , n2: number): number {
     let GoalXPos = (n2 % rows) * gridSize + gridOrigin;
     let GoalYPos = Math.floor(n2 / rows) * gridSize + gridOrigin;
 
-    let x = GoalXPos - CurrentXPos;
-    let y = GoalYPos - CurrentYPos;
-    distance = Math.sqrt(y * y + x * x);
+    let x = Math.abs(GoalXPos - CurrentXPos);
+    let y = Math.abs(GoalYPos - CurrentYPos);
+    distance = x + y;
 
     return distance;
 }
 
+
 export function aStar(start: number, goal: number, grid: AdjacencyList): Array<number[]> {
-    let visited = new Set<number>(); // Visited nodes
-    let queue = empty<number>(); 
-    
-    let distToGoal: Map<number, number> = new Map(); // Distance from node to goal
-    let distFromStart: Map<number, number> = new Map(); // Distance from the start node
-     
-    distFromStart.set(start, 0);
-    distToGoal.set(start, distance(start, goal));
-    enqueue(start, queue);
-    
+    let next = new Set<number>(); // Nodes to be evaluated
+    next.add(start);
+
+    let visited = new Set<number>(); // Evaluated nodes
+
     let predecessors: Map<number, number> = new Map(); // To reconstruct the path
+    let distance: Map<number, nodeInfo> = new Map(); // Store the f, g, and h values for each node
 
-    function constructPath(node: number): Array<number> {
-        // Reconstruct the path from goal to start
-        let path = [node];
-        let step = node;
-        while (predecessors.has(step) && step !== start) {
-            step = predecessors.get(step)!;
-            path.unshift(step); // Add step to the beginning of the path
-        }
-        return path;
-    }
-    function comparison(n1: number, n2: number): number { // Compare distances (for sorting the list of neighbors later in the code)
-        let distStartn1 = distFromStart.get(n1) || 0;
-        let distGoaln1 = distToGoal.get(n1) || 0;
-        
-        let distStartn2 = distFromStart.get(n2) || 0;
-        let distGoaln2 = distToGoal.get(n2) || 0;
-        
-        let distn1 = distStartn1 + distGoaln1;
-        let distn2 = distStartn2 + distGoaln2;
+    // Initialize the start node
+    distance.set(start, {f: 0, g: 0, h: distToNode(start, goal)});
 
-        return distn1 > distn2
-                ? 1
-                : distn1 === distn2 
-                    ? 0
-                    : -1;
-    }
+    while (next.size > 0) {
+        // Consider the node with the lowest f score in the open list
+        let current = Array.from(next).reduce((a, b) => distance.get(a)!.f < distance.get(b)!.f ? a : b);
 
-    while (!is_empty(queue)) {
-        const current = head(queue);
-        dequeue(queue);
-
-        if (visited.has(current)) {
-            continue; // Skip if already visited
+       if (current === goal) { // Goal check
+            // Construct the path
+            let path = [];
+            while (current !== undefined) {
+                path.unshift(current);
+                current = predecessors.get(current)!;
+            }
+            return [path, Array.from(visited)]; // Return the path and all visited nodes
         }
 
-        visited.add(current); // Mark as visited
+        // Move the current node from the open list to the closed list
+        next.delete(current);
+        visited.add(current);
 
-        if (current === goal) { // Goal check
-            const arrVisited = Array.from(visited);
-            return [constructPath(goal), arrVisited];
-        }
-
-        const neighbors = grid.get(current) || [];
+        // Look at all neighbors of the current node
+        let neighbors = grid.get(current) || [];
         neighbors.forEach(neighbor => {
-            // Set distance to/from start for each neighbor
-            let distGoal = distance(neighbor, goal);
-            let distStart = constructPath(neighbor).length;
-            distToGoal.set(neighbor, distGoal);
-            distFromStart.set(neighbor, distStart);
-        });
+            // Skip if neighbor is in the closed list, but allow reconsideration if a shorter path is found
+            if (visited.has(neighbor) && (distance.get(neighbor)?.g ?? Infinity) <= distance.get(current)!.g + 1) return;
 
-        // Sort list so it enqueues the node with least distance first 
-        neighbors.sort((n1, n2) => comparison(n1, n2));
+            // G value for neighbor
+            let newG = distance.get(current)!.g + 1; 
 
-        neighbors.forEach(neighbor => {
-            if (!visited.has(neighbor)) {
-                predecessors.set(neighbor, current); // Set predecessor for path reconstruction
-                enqueue(neighbor, queue);
+            if (!next.has(neighbor) || newG < (distance.get(neighbor)?.g ?? Infinity)) {
+                // If an equal or better path is found, replace it
+                predecessors.set(neighbor, current);
+                distance.set(neighbor, {
+                    f: newG + distToNode(neighbor, goal), // Update f, g, and h values
+                    g: newG,
+                    h: distToNode(neighbor, goal)
+                });
+
+                // Add the neighbor to the open list if it's not already there
+                if (!next.has(neighbor)) {
+                    next.add(neighbor);
+                } else if (visited.has(neighbor)) {
+                    // If the neighbor is in the closed list but a better path is found, it needs to be reconsidered
+                    visited.delete(neighbor);
+                    next.add(neighbor);
+                }
             }
         });
     }
-    
-    return []; // Return null if the goal is not reachable from the start
+
+    // Return an empty array if the goal is not reachable
+    return [];
 }
-
-/*
-// Usage example with the grid from your previous code
-const grid = generate2DGridAdjacencyList(20, 43);
-
-const start = 0; // Start node
-const goal = 17; // Goal node
-
-const adjList = generate2DGridAdjacencyList(6, 5);
-const path = bfs(start, goal, adjList);
-
-console.log(path); // Log the path from start to goal
-*/
