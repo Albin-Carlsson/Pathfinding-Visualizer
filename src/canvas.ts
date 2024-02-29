@@ -17,9 +17,14 @@ const gridEnd = canvas.height * 0.8;
 const nOfSquares = 20;
 export const gridSize = (gridEnd - gridOrigin) / nOfSquares;
 export const rows = 20;
-const cols = 20;
+export const cols = 20;
 let grid = generate2DGridAdjacencyList(20, 20);
 
+// ------ COLORS ------
+const goalColor = "#A3D930";
+const startColor = "#A885F2";
+const wallColor = "#39382E";
+const pathColor = "#F22786";
 
 let start = {
     placed: false,
@@ -139,7 +144,7 @@ canvas.addEventListener('mousedown', (event: MouseEvent) => {
             case 'start':
                 // if block is already placed at cursor, remove block
                 if (isFilled) {
-                    toggleFill(canvas, row, col, nOfSquares, "yellow", true, "start");
+                    toggleFill(canvas, row, col, nOfSquares, startColor, true, "start");
                     // if block at cursor was the start block, mark it as removed
                     if(row === start.row && col === start.col) {
                         start.placed = false;
@@ -148,7 +153,7 @@ canvas.addEventListener('mousedown', (event: MouseEvent) => {
 
                     } else {
                         // if it was another block, place a start block there instead
-                        toggleFill(canvas, start.row, start.col, nOfSquares, "yellow", true, "start");
+                        toggleFill(canvas, start.row, start.col, nOfSquares, startColor, true, "start");
                         startGridNode = col+20*row;
                         console.log("hello2");
 
@@ -157,14 +162,14 @@ canvas.addEventListener('mousedown', (event: MouseEvent) => {
                 } else {
                     // remove old start block and place new start block on new place
                     if (start.placed === true) {
-                        toggleFill(canvas, start.row, start.col, nOfSquares, "yellow", true, "start");
-                        toggleFill(canvas, row, col, nOfSquares, "yellow", false, "start");
+                        toggleFill(canvas, start.row, start.col, nOfSquares, startColor, true, "start");
+                        toggleFill(canvas, row, col, nOfSquares, startColor, false, "start");
                         startGridNode = col+20*row;
                         console.log("hello3");
 
                         // if no start block is placed anywhere and cursor on blank space place start.
                     } else {
-                        toggleFill(canvas, row, col, nOfSquares, "yellow", false, "start");
+                        toggleFill(canvas, row, col, nOfSquares, startColor, false, "start");
                         start.placed = true;
                         startGridNode = col+20*row;
                         console.log("hello4");
@@ -176,21 +181,21 @@ canvas.addEventListener('mousedown', (event: MouseEvent) => {
                 break;
             case 'goal':
                 if (isFilled) {
-                    toggleFill(canvas, row, col, nOfSquares, "green", true, "goal");
+                    toggleFill(canvas, row, col, nOfSquares, goalColor, true, "goal");
                     if(row === goal.row && col === goal.col) {
                         goal.placed = false;
                         goalGridNode = -1;
                     } else {
-                        toggleFill(canvas, goal.row, goal.col, nOfSquares, "green", true, "goal");
+                        toggleFill(canvas, goal.row, goal.col, nOfSquares, goalColor, true, "goal");
                         goalGridNode = col+20*row;
                     }
                 } else {
                     if (goal.placed === true) {
-                        toggleFill(canvas, goal.row, goal.col, nOfSquares, "green", true, "goal");
-                        toggleFill(canvas, row, col, nOfSquares, "green", false, "goal");
+                        toggleFill(canvas, goal.row, goal.col, nOfSquares, goalColor, true, "goal");
+                        toggleFill(canvas, row, col, nOfSquares, goalColor, false, "goal");
                         goalGridNode = col+20*row;
                     } else {
-                        toggleFill(canvas, row, col, nOfSquares, "green", false, "goal");
+                        toggleFill(canvas, row, col, nOfSquares, goalColor, false, "goal");
                         goal.placed = true;
                         goalGridNode = col+20*row;
                     }
@@ -200,9 +205,9 @@ canvas.addEventListener('mousedown', (event: MouseEvent) => {
                 break;
             case 'wall':
                 if (isFilled) {
-                    toggleFill(canvas, row, col, nOfSquares, "red", true, "wall");
+                    toggleFill(canvas, row, col, nOfSquares, wallColor, true, "wall");
                 } else {
-                    toggleFill(canvas, row, col, nOfSquares, "red", false, "wall");
+                    toggleFill(canvas, row, col, nOfSquares, wallColor, false, "wall");
                 }
                 break;
             default:
@@ -341,7 +346,7 @@ document.getElementById("aStarButton")?.addEventListener("click", () => {
 
 function runSim(fastestPath: number[], visited: number[]) {
     if (fastestPath && fastestPath.length > 0) {
-        fillPath(canvas, visited, fastestPath, 20, 20, "gray", "blue", 50);
+        fillPath(canvas, visited, fastestPath, 20, 20, "gray", pathColor, 50);
     } else {
         console.error("No valid path found.");
     }
