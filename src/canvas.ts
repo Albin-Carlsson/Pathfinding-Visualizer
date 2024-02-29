@@ -298,7 +298,7 @@ export function fillPath(canvas: HTMLCanvasElement, path: number[], fastestPath:
 
 
 let currentMode: 'start' | 'goal' | 'wall' | null = null;
-let currentAlgorithm: "bfs" | "dfs" | "aStar" | null = null;
+let currentAlgorithm: "bfs" | "dfs" | "aStar" = "bfs";
 
 document.getElementById('startButton')?.addEventListener('click', () => {
     currentMode = 'start';
@@ -334,14 +334,18 @@ document.getElementById('runButton')?.addEventListener('click', () => {
     }
 });
 
+document.getElementById("runButton")!.textContent = "Run BFS";
 document.getElementById("dfsButton")?.addEventListener("click", () => {
     currentAlgorithm = "dfs";
+    document.getElementById("runButton")!.textContent = "Run DFS";
 })
 document.getElementById("bfsButton")?.addEventListener("click", () => {
     currentAlgorithm = "bfs";
+    document.getElementById("runButton")!.textContent = "Run BFS";
 })
 document.getElementById("aStarButton")?.addEventListener("click", () => {
     currentAlgorithm = "aStar";
+    document.getElementById("runButton")!.textContent = "Run  A* ";
 })
 
 function runSim(fastestPath: number[], visited: number[]) {
