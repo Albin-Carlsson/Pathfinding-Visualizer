@@ -120,7 +120,8 @@ canvas.addEventListener('mousedown', (event: MouseEvent) => {
         console.log("error");
         return false;
     }
-
+    // function logic for placing block.
+    // is_filled is true if gridsquare you are placing in is occupied.
     function place_block(is_filled: boolean): void {
         const rect = canvas.getBoundingClientRect();
         const mouse_x = event.clientX - rect.left;
@@ -213,7 +214,26 @@ canvas.addEventListener('mousedown', (event: MouseEvent) => {
 
 });
 
-
+/**
+ * Toggles the fill state of a specified square on a canvas based on the given parameters.
+ * If the square is currently filled and `is_filled` is true, the square will be cleared
+ * and set to white. If the square is not filled and `is_filled` is false, the square will
+ * be filled with the specified `fill_color`. Additionally, if the `type` is "wall", this
+ * function will either add or remove a node from a grid structure depending on the fill state.
+ *
+ * @param {HTMLCanvasElement} canvas - The canvas element on which the square is to be toggled.
+ * @param {number} row - The row number of the square in the grid.
+ * @param {number} col - The column number of the square in the grid.
+ * @param {string} fill_color - The color to fill the square with if it is not already filled.
+ * @param {boolean} is_filled - A boolean indicating whether the square is currently filled.
+ * @param {string} type - The type of the square, which determines additional actions to be taken (e.g., "wall").
+ * @returns {void} Does not return anything.
+ *
+ * @example
+ * // Toggles the fill state of a square at row 2, column 3 on a canvas element 
+ * // and removes the node associated with that square. 
+ * toggle_fill(canvasElement, 2, 3, 'red', false, 'wall');
+ */
 function toggle_fill(canvas: HTMLCanvasElement, row: number,
     col: number, fill_color: string,
     is_filled: boolean, type: string): void {
@@ -255,8 +275,8 @@ function toggle_fill(canvas: HTMLCanvasElement, row: number,
  * @param {HTMLCanvasElement} canvas - The canvas element.
  * @param {Array<number>} path - An array containing indices of squares in the path.
  * @param {number} rows - The number of rows in the grid.
- * @param {number} cols - The number of columns in the grid.
  * @param {string} fill_color - The color to fill the squares with.
+ * @returns {void} Does not return anything.
  */
 export function fill_path(canvas: HTMLCanvasElement, path: Array<number>, 
     fastest_path: Array<number>, rows: number, 
@@ -351,10 +371,16 @@ function run_sim(fastest_path: Array<number>, visited: Array<number>): void {
     console.log(current_algorithm);
 }
 
+/** Draws 20x20 grid on startup
+ * @returns {void} Does not return anything.
+ */
 function start_sim(): void {
     draw_grid(20);
 }
-
+/** Resets grid structure by generating a new 20x20 grid. Resets grid UI on screen by redrawing it.
+ * Function is called when pressing the button "reset"
+ * @returns {void} Does not return anything.
+ */
 function reset_sim(): void {
     // reset nodes
     grid = generate_2d_grid_adjacency_list(20, 20);
