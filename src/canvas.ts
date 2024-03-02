@@ -1,4 +1,4 @@
-import {generate2DGridAdjacencyList, addNode, removeNode } from "./grid";
+import {generate_2d_grid_adjacency_list, add_node, remove_node(} from "./grid";
 import {bfs} from "./bfs";
 import {dfs} from "./dfs";
 import {aStar} from "./a-star";
@@ -11,42 +11,35 @@ canvas.height = window.innerHeight;
 const ctx = canvas.getContext('2d');
 
 // grid definitions
-const fillColor = '#FF0000'; // Fill color for the squares
-export const gridOrigin = canvas.height * 0.2;
-const gridEnd = canvas.height * 0.8;
-const nOfSquares = 20;
-export const gridSize = (gridEnd - gridOrigin) / nOfSquares;
+export const grid_origin = canvas.height * 0.2;
+const grid_end = canvas.height * 0.8;
+const n_of_squares = 20;
+export const grid_size = (grid_end - grid_origin) / n_of_squares;
 export const rows = 20;
-export const cols = 20;
-let grid = generate2DGridAdjacencyList(20, 20);
+const cols = 20;
+let grid = generate_2d_grid_adjacency_list(20, 20);
 
-// ------ COLORS ------
-const goalColor = "#A3D930";
-const startColor = "#A885F2";
-const wallColor = "#39382E";
-const pathColor = "#F22786";
 
-let start = {
+const start = {
     placed: false,
     row: -1,
     col: -1,
-}
-let startGridNode: number = 20;
-let goal = {
+};
+let start_grid_node = 20;
+const goal = {
     placed: false,
     row: -1,
     col: -1,
-}
-let goalGridNode: number = 203;
+};
+let goal_grid_node = 203;
 
 
 /**
  * Draws a rectangular grid of squares on a canvas.
- * @param {number} nOfSquares - The number of squares in each row/column of the grid.
- * @param {string} gridColor - The color of the grid lines.
+ * @param {number} n_of_squares - The number of squares in each row/column of the grid.
  * @throws {Error} If the canvas 2D context cannot be obtained.
  */
-function drawGrid(nOfSquares: number, gridColor: string) {  
+function draw_grid(n_of_squares: number): void {  
 
     // check there is a canvas
     if (!ctx) {
@@ -57,11 +50,11 @@ function drawGrid(nOfSquares: number, gridColor: string) {
   
     // Draw grid lines
     console.log("run");
-    for (let gridX = 0; gridX < nOfSquares; gridX++) {
-        for (let gridY = 0; gridY < nOfSquares; gridY++) {
-            const x = gridX * gridSize + gridOrigin;
-            const y = gridY * gridSize + gridOrigin;
-            fillSquare(x, y, gridSize, "white");
+    for (let grid_x = 0; grid_x < n_of_squares; grid_x++) {
+        for (let grid_y = 0; grid_y < n_of_squares; grid_y++) {
+            const x = grid_x * grid_size + grid_origin;
+            const y = grid_y * grid_size + grid_origin;
+            fill_square(x, y, grid_size, "white");
         }
     }
 }
@@ -71,17 +64,17 @@ function drawGrid(nOfSquares: number, gridColor: string) {
  * Draws a canvas square on specified place on canvas with black border.
  * @param {number} x - x-coordinate for top right corner of rectangle including border
  * @param {number} y - y-coord
- * @param {number} gridSize -  size of rectangle in pixels
+ * @param {number} grid_size -  size of rectangle in pixels
  * @param {string} color - inside color
  */
-export function fillSquare(x: number, y: number, gridSize: number, color: string): void {
+export function fill_square(x: number, y: number, grid_size: number, color: string): void {
     if(ctx) {
-        const borderWidth = 2;
-        ctx.clearRect(x, y, gridSize, gridSize);
+        const border_width = 2;
+        ctx.clearRect(x, y, grid_size, grid_size);
         ctx.fillStyle = "black";
-        ctx.fillRect(x, y, gridSize, gridSize);
+        ctx.fillRect(x, y, grid_size, grid_size);
         ctx.fillStyle = color;
-        ctx.fillRect(x, y, gridSize-borderWidth, gridSize-borderWidth);
+        ctx.fillRect(x, y, grid_size-border_width, grid_size-border_width);
 
     }
 }
@@ -92,30 +85,30 @@ export function fillSquare(x: number, y: number, gridSize: number, color: string
  * @param {HTMLCanvasElement} canvas - The canvas element.
  * @param {number} row - The row index of the square to toggle.
  * @param {number} col - The column index of the square to toggle.
- * @param {number} nOfSquares - The number of squares in each row/column of the grid.
- * @param {string} fillColor - The color to fill the square with.
- * @param {boolean} isFilled - Whether the square is already filled a color.
+ * @param {number} n_of_squares - The number of squares in each row/column of the grid.
+ * @param {string} fill_color - The color to fill the square with.
+ * @param {boolean} is_filled - Whether the square is already filled a color.
  */
 canvas.addEventListener('mousedown', (event: MouseEvent) => {
-    function isFilled(): boolean {
+    function is_filled(): boolean {
         const rect = canvas.getBoundingClientRect();
-        const mouseX = event.clientX - rect.left;
-        const mouseY = event.clientY - rect.top;
+        const mouse_x = event.clientX - rect.left;
+        const mouse_y = event.clientY - rect.top;
         // Get the pixel color data of the clicked position
         if(ctx) {
-            const imageData = ctx.getImageData(mouseX, mouseY, 1, 1).data;
+            const image_data = ctx.getimage_data(mouse_x, mouse_y, 1, 1).data;
             // Check if the clicked pixel is not white
-            if(mouseX > gridOrigin && mouseX < gridEnd + gridSize && mouseY > gridOrigin && mouseY < gridEnd + gridSize) {
-                const imageColor = (ctx.getImageData(mouseX, mouseY, 1, 1));
+            if(mouse_x > grid_origin && mouse_x < grid_end + grid_size && mouse_y > grid_origin && mouse_y < grid_end + grid_size) {
+                const imageColor = (ctx.getimage_data(mouse_x, mouse_y, 1, 1));
                 console.log(imageColor.data);
                 if (!(
                     // if not white or black
-                    imageData[0] === 255 &&
-                    imageData[1] === 255 &&
-                    imageData[2] === 255
-                ) && !  (imageData[0] === 0 &&
-                    imageData[1] === 0 &&
-                    imageData[2] === 0)) {
+                    image_data[0] === 255 &&
+                    image_data[1] === 255 &&
+                    image_data[2] === 255
+                ) && !  (image_data[0] === 0 &&
+                    image_data[1] === 0 &&
+                    image_data[2] === 0)) {
                     console.log("true");
                     return true;
                 } else {
@@ -128,33 +121,33 @@ canvas.addEventListener('mousedown', (event: MouseEvent) => {
         return false;
     }
 
-    function placeBlock(isFilled: boolean) {
+    function place_block(is_filled: boolean): void {
         const rect = canvas.getBoundingClientRect();
-        const mouseX = event.clientX - rect.left;
-        const mouseY = event.clientY - rect.top;
+        const mouse_x = event.clientX - rect.left;
+        const mouse_y = event.clientY - rect.top;
          // Calculate the row and column in the grid based on the mouse position
-         const row = Math.floor((mouseY - gridOrigin) / gridSize);
-         const col = Math.floor((mouseX - gridOrigin) / gridSize);
+         const row = Math.floor((mouse_y - grid_origin) / grid_size);
+         const col = Math.floor((mouse_x - grid_origin) / grid_size);
          console.log(row * 20 + col, "node");
          console.log(col, "col");
          console.log(row, "row");
-         if(mouseX > gridOrigin && mouseX < gridEnd&& mouseY > gridOrigin && mouseY < gridEnd) {
+         if(mouse_x > grid_origin && mouse_x < grid_end&& mouse_y > grid_origin && mouse_y < grid_end) {
 
-         switch (currentMode) {
+         switch (current_mode) {
             case 'start':
                 // if block is already placed at cursor, remove block
-                if (isFilled) {
-                    toggleFill(canvas, row, col, nOfSquares, startColor, true, "start");
+                if (is_filled) {
+                    toggle_fill(canvas, row, col, "yellow", true, "start");
                     // if block at cursor was the start block, mark it as removed
                     if(row === start.row && col === start.col) {
                         start.placed = false;
-                        startGridNode = -1;
+                        start_grid_node = -1;
                         console.log("hello1");
 
                     } else {
                         // if it was another block, place a start block there instead
-                        toggleFill(canvas, start.row, start.col, nOfSquares, startColor, true, "start");
-                        startGridNode = col+20*row;
+                        toggle_fill(canvas, start.row, start.col, "yellow", true, "start");
+                        start_grid_node = col+20*row;
                         console.log("hello2");
 
                     }
@@ -162,16 +155,16 @@ canvas.addEventListener('mousedown', (event: MouseEvent) => {
                 } else {
                     // remove old start block and place new start block on new place
                     if (start.placed === true) {
-                        toggleFill(canvas, start.row, start.col, nOfSquares, startColor, true, "start");
-                        toggleFill(canvas, row, col, nOfSquares, startColor, false, "start");
-                        startGridNode = col+20*row;
+                        toggle_fill(canvas, start.row, start.col, "yellow", true, "start");
+                        toggle_fill(canvas, row, col, "yellow", false, "start");
+                        start_grid_node = col+20*row;
                         console.log("hello3");
 
                         // if no start block is placed anywhere and cursor on blank space place start.
                     } else {
-                        toggleFill(canvas, row, col, nOfSquares, startColor, false, "start");
+                        toggle_fill(canvas, row, col, "yellow", false, "start");
                         start.placed = true;
-                        startGridNode = col+20*row;
+                        start_grid_node = col+20*row;
                         console.log("hello4");
 
                     }
@@ -180,34 +173,34 @@ canvas.addEventListener('mousedown', (event: MouseEvent) => {
                 start.col = col;
                 break;
             case 'goal':
-                if (isFilled) {
-                    toggleFill(canvas, row, col, nOfSquares, goalColor, true, "goal");
+                if (is_filled) {
+                    toggle_fill(canvas, row, col, "green", true, "goal");
                     if(row === goal.row && col === goal.col) {
                         goal.placed = false;
-                        goalGridNode = -1;
+                        goal_grid_node = -1;
                     } else {
-                        toggleFill(canvas, goal.row, goal.col, nOfSquares, goalColor, true, "goal");
-                        goalGridNode = col+20*row;
+                        toggle_fill(canvas, goal.row, goal.col, "green", true, "goal");
+                        goal_grid_node = col+20*row;
                     }
                 } else {
                     if (goal.placed === true) {
-                        toggleFill(canvas, goal.row, goal.col, nOfSquares, goalColor, true, "goal");
-                        toggleFill(canvas, row, col, nOfSquares, goalColor, false, "goal");
-                        goalGridNode = col+20*row;
+                        toggle_fill(canvas, goal.row, goal.col, "green", true, "goal");
+                        toggle_fill(canvas, row, col, "green", false, "goal");
+                        goal_grid_node = col+20*row;
                     } else {
-                        toggleFill(canvas, row, col, nOfSquares, goalColor, false, "goal");
+                        toggle_fill(canvas, row, col, "green", false, "goal");
                         goal.placed = true;
-                        goalGridNode = col+20*row;
+                        goal_grid_node = col+20*row;
                     }
                 }
                 goal.row = row;
                 goal.col = col;
                 break;
             case 'wall':
-                if (isFilled) {
-                    toggleFill(canvas, row, col, nOfSquares, wallColor, true, "wall");
+                if (is_filled) {
+                    toggle_fill(canvas, row, col, "red", true, "wall");
                 } else {
-                    toggleFill(canvas, row, col, nOfSquares, wallColor, false, "wall");
+                    toggle_fill(canvas, row, col, "red", false, "wall");
                 }
                 break;
             default:
@@ -216,12 +209,14 @@ canvas.addEventListener('mousedown', (event: MouseEvent) => {
     }
     }
 
-    placeBlock(isFilled());
+    place_block(is_filled());
 
 });
 
 
-function toggleFill(canvas: HTMLCanvasElement, row: number, col: number, nOfSquares: number, fillColor: string, isFilled: boolean, type: string) {
+function toggle_fill(canvas: HTMLCanvasElement, row: number,
+    col: number, fill_color: string,
+    is_filled: boolean, type: string): void {
     // Get the 2D rgoalering context for the canvas
     const ctx = canvas.getContext('2d');
 
@@ -231,39 +226,42 @@ function toggleFill(canvas: HTMLCanvasElement, row: number, col: number, nOfSqua
         return;
     }
     // Calculate coordinates of the clicked square
-    const x = col * gridSize + gridOrigin;
-    const y = row * gridSize + gridOrigin;
+    const x = col * grid_size + grid_origin;
+    const y = row * grid_size + grid_origin;
 
     // Get the color data of the clicked square
 
-    if (isFilled) {
+    if (is_filled) {
         // Clear the square if it's already filled with the target color
-        fillSquare(x, y, gridSize, "white");
-        const gridNode = col+20*row;
+        fill_square(x, y, grid_size, "white");
+        const grid_node = col+20*row;
         if(type === "wall") {
-            addNode(grid, gridNode, rows, cols);
+            add_node(grid, grid_node, rows, cols);
             console.log("node added");
         }
     } else {
         // Fill the square with the specified color if it's not filled
-        const gridNode = col+20*row;
+        const grid_node = col+20*row;
         if (type === "wall") {
-            removeNode(grid, gridNode, rows, cols)
+            remove_node(grid, grid_node, rows, cols);
             console.log("node removed");
         }
-        fillSquare(x, y, gridSize, fillColor);
+        fill_square(x, y, grid_size, fill_color);
     }
 }
 
 /**
  * Fills a path of squares on the canvas with a specified color.
  * @param {HTMLCanvasElement} canvas - The canvas element.
- * @param {number[]} path - An array containing indices of squares in the path.
+ * @param {Array<number>} path - An array containing indices of squares in the path.
  * @param {number} rows - The number of rows in the grid.
  * @param {number} cols - The number of columns in the grid.
- * @param {string} fillColor - The color to fill the squares with.
+ * @param {string} fill_color - The color to fill the squares with.
  */
-export function fillPath(canvas: HTMLCanvasElement, path: number[], fastestPath: number[], rows: number, cols: number, fillColor: string, fastestPathColor: string, delay: number) {
+export function fill_path(canvas: HTMLCanvasElement, path: Array<number>, 
+    fastest_path: Array<number>, rows: number, 
+    fill_color: string, fastest_path_color: string, 
+    delay: number): void {
     // Get the 2D rgoalering context for the canvas
     const ctx = canvas.getContext('2d');
     // Check there is a canvas
@@ -274,99 +272,95 @@ export function fillPath(canvas: HTMLCanvasElement, path: number[], fastestPath:
 
 
     // draw out all visited squares
-    // draw out all visited squares with fillColor
+    // draw out all visited squares with fill_color
     for(let i = 0; i < path.length; i++) {
-        const xPos = (path[i] % rows) * gridSize + gridOrigin;
-        const yPos = Math.floor(path[i] / rows) * gridSize + gridOrigin;
+        const x_pos = (path[i] % rows) * grid_size + grid_origin;
+        const y_pos = Math.floor(path[i] / rows) * grid_size + grid_origin;
 
         setTimeout(() => {
-            fillSquare(xPos, yPos, gridSize, fillColor);
+            fill_square(x_pos, y_pos, grid_size, fill_color);
         }, delay * i);
     }
 
-    // Apply fastestPathColor with delay
-    for(let i = 0; i < fastestPath.length; i++) {
-        const xPos = (fastestPath[i] % rows) * gridSize + gridOrigin;
-        const yPos = Math.floor(fastestPath[i] / rows) * gridSize + gridOrigin;
+    // Apply fastest_path_color with delay
+    for(let i = 0; i < fastest_path.length; i++) {
+        const x_pos = (fastest_path[i] % rows) * grid_size + grid_origin;
+        const y_pos = Math.floor(fastest_path[i] / rows) * grid_size + grid_origin;
 
         setTimeout(() => {
-            fillSquare(xPos, yPos, gridSize, fastestPathColor);
+            fill_square(x_pos, y_pos, grid_size, fastest_path_color);
         }, delay * (path.length + i));
     }
         
 }
 
 
-let currentMode: 'start' | 'goal' | 'wall' | null = null;
-let currentAlgorithm: "bfs" | "dfs" | "aStar" = "bfs";
+let current_mode: 'start' | 'goal' | 'wall' | null = null;
+let current_algorithm: "bfs" | "dfs" | "aStar" | null = null;
 
 document.getElementById('startButton')?.addEventListener('click', () => {
-    currentMode = 'start';
+    current_mode = 'start';
     console.log("start");
 });
 
 document.getElementById('goalButton')?.addEventListener('click', () => {
-    currentMode = 'goal';
+    current_mode = 'goal';
     console.log("goal");
 });
 
 document.getElementById('wallButton')?.addEventListener('click', () => {
-    currentMode = 'wall';
+    current_mode = 'wall';
     console.log("wall");
 });
 
 document.getElementById('resetButton')?.addEventListener('click', () => {
-    resetSim();
+    reset_sim();
 });
 
 document.getElementById('runButton')?.addEventListener('click', () => {
-    if (currentAlgorithm === "bfs") {
-        let [fastestPath, visited] = bfs(startGridNode, goalGridNode, grid);
-        runSim(fastestPath, visited);
-    } else if (currentAlgorithm === "dfs") {
-        let [fastestPath, visited] = dfs(startGridNode, goalGridNode, grid);
-        runSim(fastestPath, visited);
-    } else if (currentAlgorithm === "aStar") {
-        let [fastestPath, visited] = aStar(startGridNode, goalGridNode, grid);
-        runSim(fastestPath, visited);
+    if (current_algorithm === "bfs") {
+        const [fastest_path, visited] = bfs(start_grid_node, goal_grid_node, grid);
+        run_sim(fastest_path, visited);
+    } else if (current_algorithm === "dfs") {
+        const [fastest_path, visited] = dfs(start_grid_node, goal_grid_node, grid);
+        run_sim(fastest_path, visited);
+    } else if (current_algorithm === "aStar") {
+        const [fastest_path, visited] = aStar(start_grid_node, goal_grid_node, grid);
+        run_sim(fastest_path, visited);
     } else {
         return null;
     }
 });
 
-document.getElementById("runButton")!.textContent = "Run BFS";
 document.getElementById("dfsButton")?.addEventListener("click", () => {
-    currentAlgorithm = "dfs";
-    document.getElementById("runButton")!.textContent = "Run DFS";
-})
+    current_algorithm = "dfs";
+});
 document.getElementById("bfsButton")?.addEventListener("click", () => {
-    currentAlgorithm = "bfs";
-    document.getElementById("runButton")!.textContent = "Run BFS";
-})
+    current_algorithm = "bfs";
+});
 document.getElementById("aStarButton")?.addEventListener("click", () => {
-    currentAlgorithm = "aStar";
-    document.getElementById("runButton")!.textContent = "Run  A* ";
-})
+    current_algorithm = "aStar";
+});
 
-function runSim(fastestPath: number[], visited: number[]) {
-    if (fastestPath && fastestPath.length > 0) {
-        fillPath(canvas, visited, fastestPath, 20, 20, "gray", pathColor, 50);
+function run_sim(fastest_path: Array<number>, visited: Array<number>): void {
+    if (fastest_path && fastest_path.length > 0) {
+        fill_path(canvas, visited, fastest_path, 20, "gray", "blue", 50);
     } else {
         console.error("No valid path found.");
     }
-    console.log(currentAlgorithm);
+    console.log(current_algorithm);
 }
 
-function startSim() {
-    drawGrid(20, "black");
+function start_sim(): void {
+    draw_grid(20);
 }
 
-function resetSim() {
+function reset_sim(): void {
     // reset nodes
-    grid = generate2DGridAdjacencyList(20, 20);
+    grid = generate_2d_grid_adjacency_list(20, 20);
 
     // reset grid graphics
-    drawGrid(20, "black");
+    draw_grid(20);
 }
 
-startSim();
+start_sim();

@@ -15,8 +15,8 @@
  *
  * @example
  * // Generate a 3x3 grid
- * const adjList = generate2DGridAdjacencyList(3, 3);
- * console.log(adjList);
+ * const adj_list = generate_2d_grid_adjacencyList(3, 3);
+ * console.log(adj_list);
  * // Map(9) {
  * //   0 => [ 1, 3 ],
  * //   1 => [ 0, 2, 4 ],
@@ -31,73 +31,72 @@
  *
  * Notes:
  * - Nodes at the edges of the grid will have fewer adjacent nodes since they cannot connect outside the grid boundaries.
- * - This function can be used to represent graphs for various applications such as pathfinding, grid-based games, and network simulations.
  */
-export type AdjacencyList = Map<number, number[]>;
-export function generate2DGridAdjacencyList(rows: number, cols: number): AdjacencyList {
-    let adjList: AdjacencyList = new Map();
+export type AdjacencyList = Map<number, Array<number>>;
+export function generate_2d_grid_adjacency_list(rows: number, cols: number): AdjacencyList {
+    const adj_list: AdjacencyList = new Map();
 
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
-            let nodeId = row * cols + col; // Unique ID for each node
-            let edges: number[] = [];
+            const node_id = row * cols + col; // Unique ID for each node
+            const edges: Array<number> = [];
 
             // North
-            if (row > 0) edges.push(nodeId - cols);
+            if (row > 0) edges.push(node_id - cols);
             // South
-            if (row < rows - 1) edges.push(nodeId + cols);
+            if (row < rows - 1) edges.push(node_id + cols);
             // East
-            if (col < cols - 1) edges.push(nodeId + 1);
+            if (col < cols - 1) edges.push(node_id + 1);
             // West
-            if (col > 0) edges.push(nodeId - 1);
+            if (col > 0) edges.push(node_id - 1);
 
-            adjList.set(nodeId, edges);
+            adj_list.set(node_id, edges);
         }
     }
 
-    return adjList;
+    return adj_list;
 }
-// access grid position by writing console.log(adjList.get(gridNr));
+// access grid position by writing console.log(adj_list.get(gridNr));
 
-export function removeNode(adjList: AdjacencyList, nodeId: number, rows: number, cols: number): void {
+export function remove_node(adj_list: AdjacencyList, node_id: number, rows: number, cols: number): void {
     // Remove the node itself
-    adjList.delete(nodeId);
+    adj_list.delete(node_id);
 
     // Potential neighbors
     const neighbors = [
-        nodeId - 1,    // West
-        nodeId + 1,    // East
-        nodeId - cols, // North
-        nodeId + cols  // South
+        node_id - 1,    // West
+        node_id + 1,    // East
+        node_id - cols, // North
+        node_id + cols  // South
     ];
 
     // Remove the node from its neighbors' adjacency lists
-    neighbors.forEach(neighborId => {
-        if (adjList.has(neighborId)) {
-            const updatedEdges = adjList.get(neighborId)!.filter(edge => edge !== nodeId);
-            adjList.set(neighborId, updatedEdges);
+    neighbors.forEach(neighbor_id => {
+        if (adj_list.has(neighbor_id)) {
+            const updated_edges = adj_list.get(neighbor_id)!.filter(edge => edge !== node_id);
+            adj_list.set(neighbor_id, updated_edges);
         }
     });
 }
 
-export function addNode(adjList: AdjacencyList, nodeId: number, rows: number, cols: number): void {
-    const row = Math.floor(nodeId / cols);
-    const col = nodeId % cols;
-    const edges: number[] = [];
+export function add_node(adj_list: AdjacencyList, node_id: number, rows: number, cols: number): void {
+    const row = Math.floor(node_id / cols);
+    const col = node_id % cols;
+    const edges: Array<number> = [];
 
     // Determine valid adjacent nodes based on the grid structure
-    if (row > 0) edges.push(nodeId - cols);    // North
-    if (row < rows - 1) edges.push(nodeId + cols); // South
-    if (col > 0) edges.push(nodeId - 1);       // West
-    if (col < cols - 1) edges.push(nodeId + 1);   // East
+    if (row > 0) edges.push(node_id - cols);    // North
+    if (row < rows - 1) edges.push(node_id + cols); // South
+    if (col > 0) edges.push(node_id - 1);       // West
+    if (col < cols - 1) edges.push(node_id + 1);   // East
 
     // Add the node back with its edges
-    adjList.set(nodeId, edges);
+    adj_list.set(node_id, edges);
 
     // Add this node back to its neighbors' adjacency lists
-    edges.forEach(neighborId => {
-        if (adjList.has(neighborId) && !adjList.get(neighborId)!.includes(nodeId)) {
-            adjList.get(neighborId)!.push(nodeId);
+    edges.forEach(neighbor_id => {
+        if (adj_list.has(neighbor_id) && !adj_list.get(neighbor_id)!.includes(node_id)) {
+            adj_list.get(neighbor_id)!.push(node_id);
         }
     });
 }
