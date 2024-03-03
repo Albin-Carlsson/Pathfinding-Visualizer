@@ -12,16 +12,16 @@ type nodeInfo = {f: number, g: number, h: number}; // distances. g = to goal, h 
  * @returns distance between "n1" and "n2"
  */
 function distToNode(n1: number , n2: number): number {
-    let distance: number;
     let CurrentXPos = (n1 % rows) * gridSize + gridOrigin;
     let CurrentYPos = Math.floor(n1 / rows) * gridSize + gridOrigin;
     
     let GoalXPos = (n2 % rows) * gridSize + gridOrigin;
     let GoalYPos = Math.floor(n2 / rows) * gridSize + gridOrigin;
-
+    
     let x = Math.abs(GoalXPos - CurrentXPos);
     let y = Math.abs(GoalYPos - CurrentYPos);
-    distance = x + y;
+    
+    let distance: number = x + y;
 
     return distance;
 }
@@ -42,15 +42,15 @@ function distToNode(n1: number , n2: number): number {
  * console.log(result[1]); // Logs the visited nodes
  */
 export function aStar(start: number, goal: number, grid: AdjacencyList): Array<number[]> {
-    let next = new Set<number>(); // Nodes to be evaluated
-    next.add(start);
-
     let visited = new Set<number>(); // Evaluated nodes
-
+    let next = new Set<number>(); // Nodes to be evaluated
+    
+    
     let predecessors: Map<number, number> = new Map(); // To reconstruct the path
     let distance: Map<number, nodeInfo> = new Map(); // Store the f, g, and h values for each node
-
+    
     // Initialize the start node
+    next.add(start);
     distance.set(start, {f: 0, g: 0, h: distToNode(start, goal)});
 
     while (next.size > 0) {
@@ -64,10 +64,12 @@ export function aStar(start: number, goal: number, grid: AdjacencyList): Array<n
                 path.unshift(current);
                 current = predecessors.get(current)!;
             }
-            return [path, Array.from(visited)]; // Return the path and all visited nodes
+
+            const arrVisited: number[] = Array.from(visited); 
+            return [path, arrVisited]; // Return the path and all visited nodes
         }
 
-        // Move the current node from the open list to the closed list
+        // Move the current node from the to visited
         next.delete(current);
         visited.add(current);
 
@@ -83,11 +85,9 @@ export function aStar(start: number, goal: number, grid: AdjacencyList): Array<n
             if (!next.has(neighbor) || newG < (distance.get(neighbor)?.g ?? Infinity)) {
                 // If an equal or better path is found, replace it
                 predecessors.set(neighbor, current);
-                distance.set(neighbor, {
-                    f: newG + distToNode(neighbor, goal), // Update f, g, and h values
-                    g: newG,
-                    h: distToNode(neighbor, goal)
-                });
+                distance.set(neighbor, { f: newG + distToNode(neighbor, goal), // Update f, g, and h values
+                                         g: newG,
+                                         h: distToNode(neighbor, goal) });
 
                 // Add the neighbor to the open list if it's not already there
                 if (!next.has(neighbor)) {
