@@ -1,5 +1,5 @@
 
-import { AdjacencyList, generate2DGridAdjacencyList } from "./grid";
+import {AdjacencyList} from "./grid";
 import {  empty, is_empty, head, dequeue, enqueue} from '../lib/queue_array';
 
 
@@ -19,12 +19,12 @@ import {  empty, is_empty, head, dequeue, enqueue} from '../lib/queue_array';
  * console.log(result[0]); // Logs the path from start to goal
  * console.log(result[1]); // Logs the visited nodes
  */
-export function bfs(start: number, goal: number, grid: AdjacencyList): Array<number[]> {
-    let visited = new Set<number>(); // Set to keep track of visited nodes
-    let queue = empty<number>();
+export function bfs(start: number, goal: number, grid: AdjacencyList): Array<Array<number>> {
+    const visited = new Set<number>(); // Set to keep track of visited nodes
+    const queue = empty<number>();
     enqueue(start, queue);
     
-    let predecessors: Map<number, number> = new Map(); // To reconstruct the path
+    const predecessors: Map<number, number> = new Map(); // To reconstruct the path
 
     while (!is_empty(queue)) {
         const current = head(queue);
@@ -38,14 +38,14 @@ export function bfs(start: number, goal: number, grid: AdjacencyList): Array<num
 
         if (current === goal) { // Goal check
             // Reconstruct the path from goal to start
-            let path = [goal];
+            const path = [goal];
             let step = goal;
             while (predecessors.has(step) && step !== start) {
                 step = predecessors.get(step)!;
                 path.unshift(step); // Add step to the beginning of the path
             }
-            const arrVisited = Array.from(visited);
-            return [path, arrVisited];
+            const arr_visited = Array.from(visited);
+            return [path, arr_visited];
         }
 
         const neighbors = grid.get(current) || [];

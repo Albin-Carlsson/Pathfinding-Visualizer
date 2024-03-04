@@ -1,7 +1,6 @@
-import { AdjacencyList, generate2DGridAdjacencyList } from "./grid";
-import { gridOrigin, gridSize, rows } from './canvas';
-import { includes } from "lodash";
-type nodeInfo = {f: number, g: number, h: number}; // distances. g = to goal, h = from start, f = sum of g and h
+import { AdjacencyList} from "./grid";
+import { grid_origin, grid_size, rows } from './canvas';
+type NodeInfo = {f: number, g: number, h: number}; // distances. g = to goal, h = from start, f = sum of g and h
 
 
 /**
@@ -11,17 +10,17 @@ type nodeInfo = {f: number, g: number, h: number}; // distances. g = to goal, h 
  * @param n2 goal node
  * @returns distance between "n1" and "n2"
  */
-function distToNode(n1: number , n2: number): number {
-    let CurrentXPos = (n1 % rows) * gridSize + gridOrigin;
-    let CurrentYPos = Math.floor(n1 / rows) * gridSize + gridOrigin;
+function dist_to_node(n1: number , n2: number): number {
+    const current_x_pos = (n1 % rows) * grid_size + grid_origin;
+    const current_y_pos = Math.floor(n1 / rows) * grid_size + grid_origin;
     
-    let GoalXPos = (n2 % rows) * gridSize + gridOrigin;
-    let GoalYPos = Math.floor(n2 / rows) * gridSize + gridOrigin;
+    const goal_x_pos = (n2 % rows) * grid_size + grid_origin;
+    const goal_y_pos = Math.floor(n2 / rows) * grid_size + grid_origin;
     
-    let x = Math.abs(GoalXPos - CurrentXPos);
-    let y = Math.abs(GoalYPos - CurrentYPos);
+    const x = Math.abs(goal_x_pos - current_x_pos);
+    const y = Math.abs(goal_y_pos - current_y_pos);
     
-    let distance: number = x + y;
+    const distance: number = x + y;
 
     return distance;
 }
@@ -37,21 +36,21 @@ function distToNode(n1: number , n2: number): number {
  * 
  * @example
  * // Assuming a predefined AdjacencyList for a 3x3 grid
- * const result = aStar(0, 8, grid); // Find path from top-left to bottom-right
+ * const result = a_star(0, 8, grid); // Find path from top-left to bottom-right
  * console.log(result[0]); // Logs the path from start to goal
  * console.log(result[1]); // Logs the visited nodes
  */
-export function aStar(start: number, goal: number, grid: AdjacencyList): Array<number[]> {
-    let visited = new Set<number>(); // Evaluated nodes
-    let next = new Set<number>(); // Nodes to be evaluated
+export function a_star(start: number, goal: number, grid: AdjacencyList): Array<Array<number>> {
+    const visited = new Set<number>(); // Evaluated nodes
+    const next = new Set<number>(); // Nodes to be evaluated
     
     
-    let predecessors: Map<number, number> = new Map(); // To reconstruct the path
-    let distance: Map<number, nodeInfo> = new Map(); // Store the f, g, and h values for each node
+    const predecessors: Map<number, number> = new Map(); // To reconstruct the path
+    const distance: Map<number, NodeInfo> = new Map(); // Store the f, g, and h values for each node
     
     // Initialize the start node
     next.add(start);
-    distance.set(start, {f: 0, g: 0, h: distToNode(start, goal)});
+    distance.set(start, {f: 0, g: 0, h: dist_to_node(start, goal)});
 
     while (next.size > 0) {
         // Consider the node with the lowest f score in the open list
@@ -59,14 +58,14 @@ export function aStar(start: number, goal: number, grid: AdjacencyList): Array<n
 
        if (current === goal) { // Goal check
             // Construct the path
-            let path = [];
+            const path = [];
             while (current !== undefined) {
                 path.unshift(current);
                 current = predecessors.get(current)!;
             }
 
-            const arrVisited: number[] = Array.from(visited); 
-            return [path, arrVisited]; // Return the path and all visited nodes
+            const arr_visited: Array<number> = Array.from(visited); 
+            return [path, arr_visited]; // Return the path and all visited nodes
         }
 
         // Move the current node from the to visited
@@ -74,20 +73,20 @@ export function aStar(start: number, goal: number, grid: AdjacencyList): Array<n
         visited.add(current);
 
         // Look at all neighbors of the current node
-        let neighbors = grid.get(current) || [];
+        const neighbors = grid.get(current) || [];
         neighbors.forEach(neighbor => {
             // G value for neighbor
-            let newG = distance.get(current)!.g + 1; 
+            const new_g = distance.get(current)!.g + 1; 
 
             // Skip if neighbor is in the closed list, but allow reconsideration if a shorter path is found
-            if (visited.has(neighbor) && (distance.get(neighbor)?.g ?? Infinity) <= newG) return;
+            if (visited.has(neighbor) && (distance.get(neighbor)?.g ?? Infinity) <= new_g) return;
 
-            if (!next.has(neighbor) || newG < (distance.get(neighbor)?.g ?? Infinity)) {
+            if (!next.has(neighbor) || new_g < (distance.get(neighbor)?.g ?? Infinity)) {
                 // If an equal or better path is found, replace it
                 predecessors.set(neighbor, current);
-                distance.set(neighbor, { f: newG + distToNode(neighbor, goal), // Update f, g, and h values
-                                         g: newG,
-                                         h: distToNode(neighbor, goal) });
+                distance.set(neighbor, { f: new_g + dist_to_node(neighbor, goal), // Update f, g, and h values
+                                         g: new_g,
+                                         h: dist_to_node(neighbor, goal) });
 
                 // Add the neighbor to the open list if it's not already there
                 if (!next.has(neighbor)) {
