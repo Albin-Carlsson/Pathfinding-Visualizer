@@ -353,6 +353,8 @@ function runSim(fastestPath: number[], visited: number[]) {
         fillPath(canvas, visited, fastestPath, 20, 20, "gray", pathColor, 50);
     } else {
         console.error("No valid path found.");
+        alert("No valid path found.");
+
     }
     console.log(currentAlgorithm);
 }
